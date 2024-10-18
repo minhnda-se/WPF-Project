@@ -1,0 +1,42 @@
+﻿<Window x:Class="CardRoulette.ReferenceWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CardRoulette"
+        mc:Ignorable="d"
+        Title="ReferenceWindow" Height="450" Width="800" WindowStartupLocation="CenterScreen" WindowStyle="None" ResizeMode="NoResize"
+        Background="Transparent" 
+        AllowsTransparency="True">
+    <Border CornerRadius="30" Background="#EFF2F7" MouseDown="Border_MouseDown">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="100"/>
+                <RowDefinition Height="60"/>
+                <RowDefinition Height="60"/>
+                <RowDefinition Height="60"/>
+                <RowDefinition Height="60"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="60"/>
+                
+            </Grid.RowDefinitions>
+            <TextBlock Name="Title" Style="{StaticResource Title}"/>
+            <Button Name="Return" Content="Return" Style="{StaticResource menuButton}" VerticalAlignment="Center" Grid.Row="1" Click="Return_Click"/>
+            <Button Name="Start" Content="Start" Style="{StaticResource menuButton}" VerticalAlignment="Center" Grid.Row="2"/>
+            <Button Name="Tutorial" Content="Tutorial" Style="{StaticResource menuButton}" VerticalAlignment="Center" Grid.Row="3" Click="Tutorial_Click"/>
+            <Button Name="Credits" Content="Credits" Style="{StaticResource menuButton}" VerticalAlignment="Center" Grid.Row="4" Click="Credits_Click"/>
+            <Button Name="Quit" Content="Quit" Style="{StaticResource menuButton}" VerticalAlignment="Center" Grid.Row="6" Click="Quit_Click"/>
+
+            <Grid Name="TutorialGrid" Grid.Column="1" Grid.RowSpan="7" Visibility="Collapsed">
+                <TextBlock Text="Tutori"/>
+            </Grid>
+            <Grid Name="CreditsGrid"  Grid.Column="1" Grid.RowSpan="7" Visibility="Collapsed">
+                <TextBlock Text="Credits"/>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>
