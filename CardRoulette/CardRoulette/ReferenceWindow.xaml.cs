@@ -19,21 +19,65 @@ namespace CardRoulette
     /// </summary>
     public partial class ReferenceWindow : Window
     {
+        private GameWindow gameWindow;
+        
         public ReferenceWindow(string title)
         {
             InitializeComponent();
             Title.Text = title;
             DisplayContentGrid(title);
         }
+
+        // Constructor that accepts a GameWindow reference
+        public ReferenceWindow(GameWindow gameWindow, string title)
+        {
+            InitializeComponent();
+            Title.Text = title;
+            DisplayContentGrid(title);
+            this.gameWindow = gameWindow;
+            if (gameWindow != null)
+            {
+                Start.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                Start.Visibility = Visibility.Visible;
+            }
+        }
         private void Return_Click(object sender, RoutedEventArgs e)
         {
-            MainWindow mainWindow = new MainWindow();
-            mainWindow.Show();
+            if (gameWindow != null)
+            {
+                this.Close();
+            }
+            else
+            {
+                MainWindow mainWindow = new MainWindow();
+                mainWindow.Show();
+                this.Close();
+            }
+        }
+        private void Start_Click(object sender, RoutedEventArgs e)
+        {
+            GameWindow gameWindow = new GameWindow();
+            gameWindow.Show();
             this.Close();
         }
         private void Quit_Click(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            var result = MessageBox.Show(
+                "Are you sure you want to exit?",
+                "Exit Confirmation",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning
+            );
+
+            // If the user clicks Yes, close both windows.
+            if (result == MessageBoxResult.Yes)
+            {
+                this.Close();
+                gameWindow.Close();
+            }
         }
         private void Tutorial_Click(object sender, RoutedEventArgs e)
         {
@@ -48,7 +92,7 @@ namespace CardRoulette
         }
 
 
-      
+
 
 
 

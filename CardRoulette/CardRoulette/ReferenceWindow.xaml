@@ -8,7 +8,7 @@
         Title="ReferenceWindow" Height="450" Width="800" WindowStartupLocation="CenterScreen" WindowStyle="None" ResizeMode="NoResize"
         Background="Transparent" 
         AllowsTransparency="True">
-    <Border CornerRadius="30" Background="#EFF2F7" MouseDown="Border_MouseDown">
+    <Border CornerRadius="30" Background="#cfd1cd" MouseDown="Border_MouseDown">
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="200"/>
@@ -26,7 +26,7 @@
             </Grid.RowDefinitions>
             <TextBlock Name="Title" Style="{StaticResource Title}"/>
             <Button Name="Return" Content="Return" Style="{StaticResource menuButton}" VerticalAlignment="Center" Grid.Row="1" Click="Return_Click"/>
-            <Button Name="Start" Content="Start" Style="{StaticResource menuButton}" VerticalAlignment="Center" Grid.Row="2"/>
+            <Button Name="Start" Content="Start" Style="{StaticResource menuButton}" VerticalAlignment="Center" Grid.Row="2" Click="Start_Click"/>
             <Button Name="Tutorial" Content="Tutorial" Style="{StaticResource menuButton}" VerticalAlignment="Center" Grid.Row="3" Click="Tutorial_Click"/>
             <Button Name="Credits" Content="Credits" Style="{StaticResource menuButton}" VerticalAlignment="Center" Grid.Row="4" Click="Credits_Click"/>
             <Button Name="Quit" Content="Quit" Style="{StaticResource menuButton}" VerticalAlignment="Center" Grid.Row="6" Click="Quit_Click"/>

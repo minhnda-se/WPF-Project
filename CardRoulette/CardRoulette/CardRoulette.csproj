@@ -9,11 +9,27 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Imgs\Card.png" />
     <None Remove="Imgs\Jack.png" />
+    <None Remove="Imgs\Joker.png" />
+    <None Remove="Imgs\King.png" />
+    <None Remove="Imgs\Queen.png" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Imgs\Card.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Imgs\Jack.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Imgs\Joker.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Imgs\King.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Imgs\Queen.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
