@@ -39,8 +39,8 @@ namespace CardRoulette
 
         private void Start_Click(object sender, RoutedEventArgs e)
         {
-            GameWindow gameWindow = new GameWindow();
-            gameWindow.Show();
+            StartWindow startWindow = new StartWindow();
+            startWindow.Show();
             this.Close();
         }
 

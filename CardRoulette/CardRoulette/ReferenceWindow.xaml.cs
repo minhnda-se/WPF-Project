@@ -20,6 +20,7 @@ namespace CardRoulette
     public partial class ReferenceWindow : Window
     {
         private GameWindow gameWindow;
+        private StartWindow startWindow;
         
         public ReferenceWindow(string title)
         {
@@ -44,9 +45,24 @@ namespace CardRoulette
                 Start.Visibility = Visibility.Visible;
             }
         }
+        public ReferenceWindow(StartWindow startWindow, string title)
+        {
+            InitializeComponent();
+            Title.Text = title;
+            DisplayContentGrid(title);
+            this.startWindow = startWindow;
+            if (gameWindow != null || startWindow != null)
+            {
+                Start.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                Start.Visibility = Visibility.Visible;
+            }
+        }
         private void Return_Click(object sender, RoutedEventArgs e)
         {
-            if (gameWindow != null)
+            if (gameWindow != null || startWindow != null)
             {
                 this.Close();
             }
@@ -59,8 +75,8 @@ namespace CardRoulette
         }
         private void Start_Click(object sender, RoutedEventArgs e)
         {
-            GameWindow gameWindow = new GameWindow();
-            gameWindow.Show();
+            StartWindow startWindow = new StartWindow();
+            startWindow.Show();
             this.Close();
         }
         private void Quit_Click(object sender, RoutedEventArgs e)
@@ -76,7 +92,8 @@ namespace CardRoulette
             if (result == MessageBoxResult.Yes)
             {
                 this.Close();
-                gameWindow.Close();
+                if (gameWindow != null) gameWindow.Close();
+                if (startWindow != null) startWindow.Close();
             }
         }
         private void Tutorial_Click(object sender, RoutedEventArgs e)
