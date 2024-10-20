@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Imgs\Bullet.png" />
     <None Remove="Imgs\Card.png" />
     <None Remove="Imgs\Computer.png" />
     <None Remove="Imgs\Jack.png" />
@@ -18,6 +19,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Imgs\Bullet.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Imgs\Card.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>

@@ -33,6 +33,15 @@ namespace CardRoulette.Controller
             return card;
         }
 
+        public Card GetCardByName(string cardName)
+        {
+            int index = 0;
+            if (cardName.Equals("Queen")) index = 1;
+            else if (cardName.Equals("King")) index = 2;
+            else if (cardName.Equals("Jack")) index = 3;
+            return GetCard(index);
+        }
+
         public Card GetTableCard()
         {
             Random random = new Random();
@@ -56,6 +65,19 @@ namespace CardRoulette.Controller
                 new Card("Jack", "Imgs/Jack.png")
             };
         }
+
+        public bool IsTableCard(List<string> cards, string tableCard)
+        {
+            int count = 0;
+            foreach (string card in cards)
+            {
+                if (card.Equals(tableCard) || card.Equals("Joker")) count++;
+            }
+            if (count == cards.Count) return true;
+            return false;
+        }
+
+        
         
     }
 }

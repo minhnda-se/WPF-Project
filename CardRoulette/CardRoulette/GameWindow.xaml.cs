@@ -16,6 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 
+
 namespace CardRoulette
 {
     /// <summary>
@@ -33,17 +34,25 @@ namespace CardRoulette
         private int currentIndex;
         private List<Button> computerDeck;
         private List<Button> userDeck;
+        private List<string> selectedCardText;
+        private List<Image> throwingCards;
         private CardController cardController;
+        private ComputerController computerController;
+      
         public GameWindow(Card tableCard)
         {
             InitializeComponent();
             selectedCount = 0;
             cardController = new CardController();
+            computerController = new ComputerController();
+            
             selectedCard = new List<Button>();
+            selectedCardText = new List<string>();
             this.tableCard = tableCard;
             TableCard.Source = new BitmapImage(new Uri(tableCard.ImgUrl, UriKind.RelativeOrAbsolute));
             computerDeck = new List<Button> { Card1, Card2, Card3, Card4, Card5 };
             userDeck = new List<Button> { UserCard1, UserCard2, UserCard3, UserCard4, UserCard5 };
+            throwingCards = new List<Image> { ShowCard1, ShowCard2, ShowCard3, };
         }
        
 
@@ -63,19 +72,69 @@ namespace CardRoulette
             referenceWindow.Show();
         }
 
-       private void Throw_Click(object sender, RoutedEventArgs e)
+       private async void Throw_Click(object sender, RoutedEventArgs e)
         {
             if (selectedCard.Count > 0)
             {
                foreach (Button card in selectedCard)
                 {
                     card.Visibility = Visibility.Collapsed;
+                    selectedCardText.Add(card.Tag.ToString());
                 }
                 CardThrowing.Text = tableCard.Name+" x" + selectedCard.Count.ToString();
+                ComputerText.Text = null;
+                btnLiar.IsEnabled = false;
+                await Task.Delay(1200);
+                // If value > 2, computer with go with liar
+                if ( computerController.ComputerAction() > 2)
+                {
+                    
+                    StartTypingEffect(ComputerText, "Liar!!", 50);
+                    await Task.Delay(1000);
+                    int index = 0;
+                    foreach (Button card in selectedCard)
+                    {
+                        Image image = card.Content as Image;
+
+                        if (card.Tag.Equals("Joker")){
+                            Card crd = cardController.GetCardByName(card.Tag.ToString());
+                            throwingCards[index].Source = new BitmapImage(new Uri(crd.ImgUrl, UriKind.RelativeOrAbsolute));
+                        }
+                        else {
+                            throwingCards[index].Source = new BitmapImage(new Uri(image.Source.ToString(), UriKind.RelativeOrAbsolute));
+                        }
+                        throwingCards[index].Visibility = Visibility.Visible;
+                        index++;
+                        await Task.Delay(200);
+                    }
+                    await Task.Delay(1000);
+                    ComputerText.Text = null;
+                    if (cardController.IsTableCard(selectedCardText, tableCard.Name))
+                    {
+                        StartTypingEffect(ComputerText, "Fuck!!", 50);
+                        ComputerTakeShoot();
+                    }
+                    else
+                    {
+                        StartTypingEffect(ComputerText, "Hah!! I got your $ss.", 50);
+                    }
+                }
+                else
+                {
+                    StartTypingEffect(ComputerText, "Good Move, Good Move!! hmm", 50);
+                }
+                await Task.Delay(1200);
                 selectedCard.Clear();
                 selectedCount = 0;
+                selectedCardText.Clear();
+                btnLiar.IsEnabled = true;
             }
            
+        }
+
+        private void Liar_Click(object sender, RoutedEventArgs e)
+        {
+
         }
 
         private void Image_Click(object sender, RoutedEventArgs e)
@@ -102,7 +161,6 @@ namespace CardRoulette
                         image.Opacity = 0.5;
                         selectedCount++;
                         selectedCard.Add(clickedButton);
-                        MessageBox.Show(selectedCard[0].Tag.ToString());
                     }
                 }
 
@@ -145,13 +203,32 @@ namespace CardRoulette
         // Example usage: Start typing effect when the window is loaded or on any other event
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            // Start typing effect for TextBlock with desired speed (100 ms between characters)
-            StartTypingEffect(ComputerText, "Welcome, Player!!", 50);
+            StartTypingEffect(ComputerText, "Welcome!! Challenger", 50);
             SetComputerDeck();
             SetUserDeck();
-            
         }
+        private void RestartGame()
+        {
+            // Start typing effect for TextBlock with desired speed (100 ms between characters)
+            
+            for(int i = 0; i < userDeck.Count; i++)
+            {
+                userDeck[i].Visibility = Visibility.Visible;
+                userDeck[i].Background = null;
+                Image image = userDeck[i].Content as Image;
+                image.Opacity = 1;
+                computerDeck[i].Visibility = Visibility.Visible;
+                if (i < 3) throwingCards[i].Visibility = Visibility.Collapsed;
+                
+            }
+            tableCard = cardController.GetTableCard();
+            TableCard.Source = new BitmapImage(new Uri(tableCard.ImgUrl, UriKind.RelativeOrAbsolute));
+            SetComputerDeck();
+            SetUserDeck();
+            ComputerText.Text = null;
+            StartTypingEffect(ComputerText, "Try again", 50);
 
+        }
         private void  SetComputerDeck()
         {
             List<Card> deck = cardController.CardDeck();
@@ -178,6 +255,43 @@ namespace CardRoulette
                 deck.Remove(getCard);
             }
         }
+
+
+        private async void ComputerTakeShoot()
+        {
+            CustomMessageBox customMessageBox = new CustomMessageBox();
+            customMessageBox.Show();
+            await customMessageBox.UserTakeShoot();
+            Random random = new Random();
+            if (random.Next(1, 6) > 3)
+            {
+
+                // Close the custom message box
+                var result = MessageBox.Show("Computer survive!");
+                if (result == MessageBoxResult.OK)
+                {
+                    RestartGame();
+                }
+                
+            }
+            else
+            {
+
+                var result = MessageBox.Show("Computer is dead!");
+                if (result == MessageBoxResult.OK)
+                {
+                    MessageBox.Show("You win!!");
+                }
+
+            }
+
+
+            // Optionally, display a confirmation after the delay
+
+
+        }
+
+
 
     }
 }
