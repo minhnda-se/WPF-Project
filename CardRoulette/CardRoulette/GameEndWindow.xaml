@@ -1,0 +1,32 @@
+﻿<Window x:Class="CardRoulette.GameEndWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CardRoulette"
+        mc:Ignorable="d"
+        Title="GameEndWindow" Height="300" Width="500" WindowStartupLocation="CenterScreen" WindowStyle="None" ResizeMode="NoResize"
+        Background="Transparent" 
+        AllowsTransparency="True">
+    <Border CornerRadius="30" Background="#EFF2F7" MouseDown="Border_MouseDown">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Name="EndTitle" Text="Game Over" FontSize="60" Margin="0 30 0 0 " VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Red"/>
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Button Content="Menu" Style="{StaticResource menuButton}" Grid.Column="1" Click="Menu_Click"/>
+                <Button Content="Quit" Style="{StaticResource menuButton}" Grid.Column="2" Click="Quit_Click"/>
+            </Grid>
+        </Grid>
+        
+    </Border>
+</Window>

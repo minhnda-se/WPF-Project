@@ -32,20 +32,26 @@ namespace CardRoulette
         private DispatcherTimer timer;
         private string fullText;
         private int currentIndex;
+        private int userCardCount;
+        private int computerCardCount;
         private List<Button> computerDeck;
         private List<Button> userDeck;
         private List<string> selectedCardText;
         private List<Image> throwingCards;
         private CardController cardController;
         private ComputerController computerController;
-      
+        private ReferenceWindow referenceWindow;
+
+
         public GameWindow(Card tableCard)
         {
             InitializeComponent();
             selectedCount = 0;
+            userCardCount = 0;
+            computerCardCount = 0;
             cardController = new CardController();
             computerController = new ComputerController();
-            
+            referenceWindow  = new ReferenceWindow(this, "Tutorial");
             selectedCard = new List<Button>();
             selectedCardText = new List<string>();
             this.tableCard = tableCard;
@@ -68,7 +74,7 @@ namespace CardRoulette
 
         private void Menu_Click(object sender, RoutedEventArgs e)
         {
-            ReferenceWindow referenceWindow = new ReferenceWindow(this, "Tutorial");
+            
             referenceWindow.Show();
         }
 
@@ -82,14 +88,16 @@ namespace CardRoulette
                     selectedCardText.Add(card.Tag.ToString());
                 }
                 CardThrowing.Text = tableCard.Name+" x" + selectedCard.Count.ToString();
+                userCardCount += selectedCard.Count;
                 ComputerText.Text = null;
                 btnLiar.IsEnabled = false;
                 await Task.Delay(1200);
-                // If value > 2, computer with go with liar
-                if ( computerController.ComputerAction() > 2)
+                //Computer guess
+                //computer with go with liar with 60% changes
+                if ( computerController.ComputerAction() > 4)
                 {
-                    
-                    StartTypingEffect(ComputerText, "Liar!!", 50);
+
+                    await StartTypingEffect(ComputerText, "Liar!!", 50);
                     await Task.Delay(1000);
                     int index = 0;
                     foreach (Button card in selectedCard)
@@ -111,19 +119,30 @@ namespace CardRoulette
                     ComputerText.Text = null;
                     if (cardController.IsTableCard(selectedCardText, tableCard.Name))
                     {
-                        StartTypingEffect(ComputerText, "Fuck!!", 50);
-                        ComputerTakeShoot();
+                        await StartTypingEffect(ComputerText, "Fuck!!", 50);
+                        bool result = await ComputerTakeShoot();
+                        CheckStatus(result, "Victory");
+                        
                     }
                     else
                     {
-                        StartTypingEffect(ComputerText, "Hah!! I got your $ss.", 50);
+                        await StartTypingEffect(ComputerText, "Hah!! I got your $ss.", 50);
+                        bool result = await UserTakeShoot();
+                        CheckStatus(result, "Game Over");
                     }
                 }
                 else
                 {
-                    StartTypingEffect(ComputerText, "Good Move, Good Move!! hmm", 50);
+                    await StartTypingEffect(ComputerText, "Good Move, Good Move!! hmm", 50);
+                    await Task.Delay(1000);
+                    if (userCardCount == 5)
+                    {
+                        await StartTypingEffect(ComputerText, "Well play!! Victory is your", 50);
+                        await Task.Delay(1000);
+                        NoCardLeftEnding("User");
+                    }
                 }
-                await Task.Delay(1200);
+                
                 selectedCard.Clear();
                 selectedCount = 0;
                 selectedCardText.Clear();
@@ -168,37 +187,25 @@ namespace CardRoulette
         }
 
 
-        private void StartTypingEffect(TextBlock textBlock, string text, int speedInMs)
+        private async Task StartTypingEffect(TextBlock textBlock, string text, int speedInMs)
         {
             // Reset the current text state and setup initial conditions
             fullText = text;
             currentIndex = 0;
+            textBlock.Text = string.Empty;  // Clear any existing text
 
-            // Initialize the timer with the desired speed (in ms)
-            timer = new DispatcherTimer
+            // Simulate the typing effect asynchronously
+            while (currentIndex < fullText.Length)
             {
-                Interval = TimeSpan.FromMilliseconds(speedInMs) // Speed of typing (in ms)
-            };
+                // Append one character from the string to the TextBlock
+                textBlock.Text += fullText[currentIndex];
+                currentIndex++;
 
-            // Event handler for each timer tick
-            timer.Tick += (sender, e) =>
-            {
-                if (currentIndex < fullText.Length)
-                {
-                    // Append one character from the string to the TextBlock
-                    textBlock.Text += fullText[currentIndex];
-                    currentIndex++;
-                }
-                else
-                {
-                    // Stop the timer once all the text has been displayed
-                    timer.Stop();
-                }
-            };
-
-            // Start the timer to animate the text
-            timer.Start();
+                // Wait for the specified speed before continuing to the next character
+                await Task.Delay(speedInMs);
+            }
         }
+
 
         // Example usage: Start typing effect when the window is loaded or on any other event
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -226,6 +233,8 @@ namespace CardRoulette
             SetComputerDeck();
             SetUserDeck();
             ComputerText.Text = null;
+            userCardCount = 0;
+            computerCardCount = 0;
             StartTypingEffect(ComputerText, "Try again", 50);
 
         }
@@ -255,10 +264,18 @@ namespace CardRoulette
                 deck.Remove(getCard);
             }
         }
-
-
-        private async void ComputerTakeShoot()
+        private void NoCardLeftEnding(string player)
         {
+            string title = player.Equals("User") ? "Victory" : "Game Over";
+            GameEndWindow gameEndWindow = new GameEndWindow(title);
+            gameEndWindow.Show();
+            this.Close();
+            referenceWindow.Close();
+        }
+
+        private async Task<bool> ComputerTakeShoot()
+        {
+            bool isDead = true;
             CustomMessageBox customMessageBox = new CustomMessageBox();
             customMessageBox.Show();
             await customMessageBox.UserTakeShoot();
@@ -270,27 +287,68 @@ namespace CardRoulette
                 var result = MessageBox.Show("Computer survive!");
                 if (result == MessageBoxResult.OK)
                 {
-                    RestartGame();
+                   isDead = false;
                 }
-                
+
             }
             else
             {
-
                 var result = MessageBox.Show("Computer is dead!");
                 if (result == MessageBoxResult.OK)
                 {
-                    MessageBox.Show("You win!!");
+                    isDead = true;
                 }
 
             }
+            return isDead;
 
+        }
+        private async Task<bool> UserTakeShoot()
+        {
+            bool isDead = true;
+            CustomMessageBox customMessageBox = new CustomMessageBox();
+            customMessageBox.Show();
+            await customMessageBox.UserTakeShoot();
+            Random random = new Random();
+            if (random.Next(1, 6) > 3)
+            {
 
-            // Optionally, display a confirmation after the delay
+                // Close the custom message box
+                var result = MessageBox.Show(" How lucky are you!!");
+                if (result == MessageBoxResult.OK)
+                {
+                    isDead = false;
+                }
 
+            }
+            else
+            {
+                var result = MessageBox.Show("You die!!");
+                if (result == MessageBoxResult.OK)
+                {
+                    isDead = true;
+                }
+
+            }
+            return isDead;
 
         }
 
+        private void CheckStatus(bool result, string title)
+        {
+            if (result)
+            {
+                GameEndWindow gameEndWindow = new GameEndWindow(title);
+                gameEndWindow.Show();
+                this.Close();
+                referenceWindow.Close();
+
+            }
+            else
+            {
+                RestartGame();
+            }
+        }
 
 
     }
