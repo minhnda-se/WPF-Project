@@ -37,6 +37,7 @@ namespace CardRoulette
         private List<Button> computerDeck;
         private List<Button> userDeck;
         private List<string> selectedCardText;
+        private List<string> computerSelected;
         private List<Image> throwingCards;
         private CardController cardController;
         private ComputerController computerController;
@@ -54,6 +55,7 @@ namespace CardRoulette
             referenceWindow  = new ReferenceWindow(this, "Tutorial");
             selectedCard = new List<Button>();
             selectedCardText = new List<string>();
+            computerSelected = new List<string>();
             this.tableCard = tableCard;
             TableCard.Source = new BitmapImage(new Uri(tableCard.ImgUrl, UriKind.RelativeOrAbsolute));
             computerDeck = new List<Button> { Card1, Card2, Card3, Card4, Card5 };
@@ -80,21 +82,24 @@ namespace CardRoulette
 
        private async void Throw_Click(object sender, RoutedEventArgs e)
         {
+            btnThrow.IsEnabled = false;
+            btnLiar.IsEnabled = false;
+            //User throw card
             if (selectedCard.Count > 0)
             {
-               foreach (Button card in selectedCard)
+                foreach (Button card in selectedCard)
                 {
                     card.Visibility = Visibility.Collapsed;
                     selectedCardText.Add(card.Tag.ToString());
                 }
-                CardThrowing.Text = tableCard.Name+" x" + selectedCard.Count.ToString();
+                CardThrowing.Text = tableCard.Name + " x" + selectedCard.Count.ToString();
                 userCardCount += selectedCard.Count;
                 ComputerText.Text = null;
-                btnLiar.IsEnabled = false;
+               
                 await Task.Delay(1200);
                 //Computer guess
                 //computer with go with liar with 60% changes
-                if ( computerController.ComputerAction() > 4)
+                if (computerController.ComputerAction() > 9)
                 {
 
                     await StartTypingEffect(ComputerText, "Liar!!", 50);
@@ -104,7 +109,7 @@ namespace CardRoulette
                     {
                         Image image = card.Content as Image;
 
-                        if (card.Tag.Equals("Joker")){
+                        if (card.Tag.Equals("Joker")) {
                             Card crd = cardController.GetCardByName(card.Tag.ToString());
                             throwingCards[index].Source = new BitmapImage(new Uri(crd.ImgUrl, UriKind.RelativeOrAbsolute));
                         }
@@ -122,7 +127,7 @@ namespace CardRoulette
                         await StartTypingEffect(ComputerText, "Fuck!!", 50);
                         bool result = await ComputerTakeShoot();
                         CheckStatus(result, "Victory");
-                        
+
                     }
                     else
                     {
@@ -131,33 +136,92 @@ namespace CardRoulette
                         CheckStatus(result, "Game Over");
                     }
                 }
+            
                 else
                 {
                     await StartTypingEffect(ComputerText, "Good Move, Good Move!! hmm", 50);
                     await Task.Delay(1000);
-                    if (userCardCount == 5)
-                    {
-                        await StartTypingEffect(ComputerText, "Well play!! Victory is your", 50);
-                        await Task.Delay(1000);
-                        NoCardLeftEnding("User");
-                    }
+
+
                 }
-                
-                selectedCard.Clear();
-                selectedCount = 0;
-                selectedCardText.Clear();
-                btnLiar.IsEnabled = true;
+                if (userCardCount == 5)
+                {
+                    await StartTypingEffect(ComputerText, "Well play!! Victory is your", 50);
+                    await Task.Delay(1000);
+                    NoCardLeftEnding("User");
+                }
+                CardThrowing.Text = tableCard.Name + " x" + selectedCard.Count.ToString();
             }
-           
+            selectedCard.Clear();
+            selectedCount = 0;
+            selectedCardText.Clear();
+            
+            //Computer throw card
+            await StartTypingEffect(ComputerText, "It's my turn!", 50);
+            await Task.Delay(1000);
+            computerSelected.Clear();
+            Random random = new Random();
+            List<int> cards = computerController.ComputerThrowCard(random.Next(1, 3));
+            foreach (int index in cards)
+            {
+                computerDeck[index].Visibility = Visibility.Collapsed;
+                computerSelected.Add(computerDeck[index].Tag.ToString());
+            }
+            CardThrowing.Text = tableCard.Name + " x" + cards.Count.ToString();
+            computerCardCount += selectedCard.Count;
+            if (computerCardCount == 5)
+            {
+                await StartTypingEffect(ComputerText, "You still can not beat me, Loser!!", 50);
+                await Task.Delay(1000);
+                NoCardLeftEnding("Computer");
+            }
+
+            btnLiar.IsEnabled = true;
+            btnThrow.IsEnabled = true;
+
         }
 
-        private void Liar_Click(object sender, RoutedEventArgs e)
+        private async void Liar_Click(object sender, RoutedEventArgs e)
         {
+
+            int index = 0;
+            foreach (String cardName in computerSelected)
+            {
+                Card card = cardController.GetCardByName(cardName);
+
+                if (card.Name.Equals("Joker"))
+                {
+                    Card crd = cardController.GetCardByName(tableCard.ToString());
+                    throwingCards[index].Source = new BitmapImage(new Uri(crd.ImgUrl, UriKind.RelativeOrAbsolute));
+                }
+                else
+                {
+                    throwingCards[index].Source = new BitmapImage(new Uri(card.ImgUrl.ToString(), UriKind.RelativeOrAbsolute));
+                }
+                throwingCards[index].Visibility = Visibility.Visible;
+                index++;
+                await Task.Delay(200);
+                
+            }
+            await Task.Delay(1000);
+            if (cardController.IsTableCard(selectedCardText, tableCard.Name))
+            {
+                //await StartTypingEffect(ComputerText, "Fuck!!", 50);
+                //bool result = await ComputerTakeShoot();
+                //CheckStatus(result, "Victory");
+                MessageBox.Show("You win");
+
+            }
+            else
+            {
+                MessageBox.Show("You loose");
+            }
 
         }
 
         private void Image_Click(object sender, RoutedEventArgs e)
         {
+            selectedCard.Clear();
             Button clickedButton = sender as Button;
             Image image = clickedButton.Content as Image;
             if (clickedButton != null)
