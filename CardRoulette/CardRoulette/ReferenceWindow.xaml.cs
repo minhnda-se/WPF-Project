@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace CardRoulette
@@ -27,6 +29,7 @@ namespace CardRoulette
             InitializeComponent();
             Title.Text = title;
             DisplayContentGrid(title);
+            gmailLink.NavigateUri = new Uri("https://mail.google.com/mail/?view=cm&fs=1&to=anhminh02111@gmail.com");
         }
 
         // Constructor that accepts a GameWindow reference
@@ -36,6 +39,7 @@ namespace CardRoulette
             Title.Text = title;
             DisplayContentGrid(title);
             this.gameWindow = gameWindow;
+            gmailLink.NavigateUri = new Uri("https://mail.google.com/mail/?view=cm&fs=1&to=anhminh02111@gmail.com");
             if (gameWindow != null)
             {
                 Start.Visibility = Visibility.Collapsed;
@@ -51,6 +55,7 @@ namespace CardRoulette
             Title.Text = title;
             DisplayContentGrid(title);
             this.startWindow = startWindow;
+            gmailLink.NavigateUri = new Uri("https://mail.google.com/mail/?view=cm&fs=1&to=anhminh02111@gmail.com");
             if (gameWindow != null || startWindow != null)
             {
                 Start.Visibility = Visibility.Collapsed;
@@ -108,11 +113,6 @@ namespace CardRoulette
             DisplayContentGrid("Credits");
         }
 
-
-
-
-
-
         private void DisplayContentGrid(string title)
         {
 
@@ -134,6 +134,27 @@ namespace CardRoulette
             {
                 this.DragMove();
             }
+        }
+
+        private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
+        {
+            
+            try
+            {
+                // Open the URL in the default browser (Gmail or GitHub)
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = e.Uri.ToString(),
+                    UseShellExecute = true
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error opening link: {ex.Message}");
+            }
+
+            // Mark the event as handled
+            e.Handled = true;
         }
     }
 }

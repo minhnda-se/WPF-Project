@@ -30,12 +30,44 @@
             <Button Name="Tutorial" Content="Tutorial" Style="{StaticResource menuButton}" VerticalAlignment="Center" Grid.Row="3" Click="Tutorial_Click"/>
             <Button Name="Credits" Content="Credits" Style="{StaticResource menuButton}" VerticalAlignment="Center" Grid.Row="4" Click="Credits_Click"/>
             <Button Name="Quit" Content="Quit" Style="{StaticResource menuButton}" VerticalAlignment="Center" Grid.Row="6" Click="Quit_Click"/>
-
-            <Grid Name="TutorialGrid" Grid.Column="1" Grid.RowSpan="7" Visibility="Collapsed">
-                <TextBlock Text="Tutori"/>
+            <Border Grid.RowSpan="7" BorderThickness="0 0 2 0" BorderBrush="#787878" Margin="0 0 10 0"/>
+            <Grid Name="TutorialGrid" Grid.Column="1" Grid.RowSpan="7" Visibility="Collapsed" >
+                
             </Grid>
             <Grid Name="CreditsGrid"  Grid.Column="1" Grid.RowSpan="7" Visibility="Collapsed">
-                <TextBlock Text="Credits"/>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="100"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBlock Text="Special Thanks" FontSize="40" Foreground="red" Grid.Column="1" VerticalAlignment="Center"/>
+                <Grid Grid.Column="1" Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="135"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Created by" FontSize="24" Foreground="#db8651" Margin="15 0 0 0"/>
+                    <TextBlock Text="minhnda" FontSize="24" Grid.Column="1" Margin="15 0 0 0"/>
+                </Grid>
+                <TextBlock Text="A huge thanks to everyone who has played this game." FontSize="24" TextWrapping="Wrap" Grid.Column="1" Grid.Row="2" Margin="15 0 0 0"/>
+                <TextBlock Text="This game is a first demo project that I have done in Window Application Platform." FontSize="24" TextWrapping="Wrap" Grid.Column="1" Grid.Row="3" Margin="15 0 0 0"/>
+
+                <TextBlock FontSize="24" TextWrapping="Wrap" Margin="15 0 0 0" Grid.Row="4" Grid.Column="1" Grid.RowSpan="2" >
+                <Run Text="If you'd like to support this project, please contact me through" />
+    
+                <Hyperlink Name="gmailLink" NavigateUri="" RequestNavigate="Hyperlink_RequestNavigate" Foreground="#db8651">
+                    <Run Text="Email" />
+                </Hyperlink>
+    
+                <Run Text="or" />
+    
+                <Hyperlink NavigateUri="https://github.com/minhnda-se" RequestNavigate="Hyperlink_RequestNavigate" Foreground="#db8651">
+                    <Run Text="GitHub." />
+                </Hyperlink>
+                </TextBlock>
             </Grid>
         </Grid>
     </Border>
