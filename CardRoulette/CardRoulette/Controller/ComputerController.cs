@@ -18,22 +18,24 @@ namespace CardRoulette.Controller
             return random.Next(1, 10); 
         }
 
-        public List<int> ComputerThrowCard(int numCard)
+        public List<int> ComputerThrowCard(int numCard, List<int> selectedIndex)
         {
             Random random = new Random();
             List<int> cards = new List<int>();
-            int previous = -1;
-            int index = 0;
-            while (index < numCard)
+            for (int i = 0; i < selectedIndex.Count; i++)
             {
-                int card = random.Next(0,4);
-                if (card != previous)
+                if (i < numCard)
                 {
-                    previous = card;
-                    cards.Add(card);
-                    index++;
+                    int card = selectedIndex[random.Next(0, selectedIndex.Count())];
+                    if (cards.Contains(card))
+                    {
+                        i--;
+                    }
+                    else
+                    {
+                        cards.Add(card);
+                    }
                 }
-
             }
             return cards;
         }

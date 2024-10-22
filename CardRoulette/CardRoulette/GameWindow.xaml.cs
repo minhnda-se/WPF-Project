@@ -2,6 +2,7 @@
 using CardRoulette.Model;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -38,11 +39,12 @@ namespace CardRoulette
         private List<Button> userDeck;
         private List<string> selectedCardText;
         private List<string> computerSelected;
+        private List<int> selectedIndex;
         private List<Image> throwingCards;
         private CardController cardController;
         private ComputerController computerController;
         private ReferenceWindow referenceWindow;
-
+        private bool isEndTurn;
 
         public GameWindow(Card tableCard)
         {
@@ -50,12 +52,14 @@ namespace CardRoulette
             selectedCount = 0;
             userCardCount = 0;
             computerCardCount = 0;
+            isEndTurn = false;
             cardController = new CardController();
             computerController = new ComputerController();
             referenceWindow  = new ReferenceWindow(this, "Tutorial");
             selectedCard = new List<Button>();
             selectedCardText = new List<string>();
             computerSelected = new List<string>();
+            selectedIndex = new List<int> { 0, 1, 2, 3, 4};
             this.tableCard = tableCard;
             TableCard.Source = new BitmapImage(new Uri(tableCard.ImgUrl, UriKind.RelativeOrAbsolute));
             computerDeck = new List<Button> { Card1, Card2, Card3, Card4, Card5 };
@@ -82,24 +86,26 @@ namespace CardRoulette
 
        private async void Throw_Click(object sender, RoutedEventArgs e)
         {
-            btnThrow.IsEnabled = false;
-            btnLiar.IsEnabled = false;
+            isEndTurn = false;
             //User throw card
             if (selectedCard.Count > 0)
             {
+                btnThrow.IsEnabled = false;
+                btnLiar.IsEnabled = false;
                 foreach (Button card in selectedCard)
                 {
                     card.Visibility = Visibility.Collapsed;
                     selectedCardText.Add(card.Tag.ToString());
                 }
                 CardThrowing.Text = tableCard.Name + " x" + selectedCard.Count.ToString();
+                PlayerThrowing.Text = "USER THREW";
                 userCardCount += selectedCard.Count;
                 ComputerText.Text = null;
                
                 await Task.Delay(1200);
                 //Computer guess
                 //computer with go with liar with 60% changes
-                if (computerController.ComputerAction() > 9)
+                if (computerController.ComputerAction() >= 5)
                 {
 
                     await StartTypingEffect(ComputerText, "Liar!!", 50);
@@ -150,35 +156,38 @@ namespace CardRoulette
                     await Task.Delay(1000);
                     NoCardLeftEnding("User");
                 }
-                CardThrowing.Text = tableCard.Name + " x" + selectedCard.Count.ToString();
-            }
-            selectedCard.Clear();
-            selectedCount = 0;
-            selectedCardText.Clear();
-            
-            //Computer throw card
-            await StartTypingEffect(ComputerText, "It's my turn!", 50);
-            await Task.Delay(1000);
-            computerSelected.Clear();
-            Random random = new Random();
-            List<int> cards = computerController.ComputerThrowCard(random.Next(1, 3));
-            foreach (int index in cards)
-            {
-                computerDeck[index].Visibility = Visibility.Collapsed;
-                computerSelected.Add(computerDeck[index].Tag.ToString());
-            }
-            CardThrowing.Text = tableCard.Name + " x" + cards.Count.ToString();
-            computerCardCount += selectedCard.Count;
-            if (computerCardCount == 5)
-            {
-                await StartTypingEffect(ComputerText, "You still can not beat me, Loser!!", 50);
-                await Task.Delay(1000);
-                NoCardLeftEnding("Computer");
-            }
+                selectedCard.Clear();
+                selectedCount = 0;
+                selectedCardText.Clear();
+                //Computer throw card
+                if (!isEndTurn)
+                {
+                    await StartTypingEffect(ComputerText, "It's my turn!", 50);
+                    await Task.Delay(1000);
+                    computerSelected.Clear();
+                    Random random = new Random();
+                    List<int> cards = computerController.ComputerThrowCard(random.Next(1, 3), selectedIndex);
+                    PlayerThrowing.Text = "COMPUTER THREW";
+                    CardThrowing.Text = tableCard.Name + " x" + cards.Count.ToString();
+                    foreach (int index in cards)
+                    {
+                        computerDeck[index].Visibility = Visibility.Collapsed;
+                        computerSelected.Add(computerDeck[index].Tag.ToString());
+                        selectedIndex.Remove(index);
+                    }
+                    CardThrowing.Text = tableCard.Name + " x" + cards.Count.ToString();
+                    if (selectedIndex.Count == 0)
+                    {
+                        await StartTypingEffect(ComputerText, "You still can not beat me, Loser!!", 50);
+                        await Task.Delay(1000);
+                        NoCardLeftEnding("Computer");
+                    }
+                    btnLiar.IsEnabled = true;
+                    btnThrow.IsEnabled = true;
+                }
 
-            btnLiar.IsEnabled = true;
-            btnThrow.IsEnabled = true;
-
+                
+            }
         }
 
         private async void Liar_Click(object sender, RoutedEventArgs e)
@@ -204,24 +213,24 @@ namespace CardRoulette
                 
             }
             await Task.Delay(1000);
-            if (cardController.IsTableCard(selectedCardText, tableCard.Name))
+            if (!cardController.IsTableCard(computerSelected, tableCard.Name))
             {
-                //await StartTypingEffect(ComputerText, "Fuck!!", 50);
-                //bool result = await ComputerTakeShoot();
-                //CheckStatus(result, "Victory");
-                MessageBox.Show("You win");
+                await StartTypingEffect(ComputerText, "Fuck!!", 50);
+                bool result = await ComputerTakeShoot();
+                CheckStatus(result, "Victory");
 
             }
             else
             {
-                MessageBox.Show("You loose");
+                await StartTypingEffect(ComputerText, "Hah!! I got your $ss.", 50);
+                bool result = await UserTakeShoot();
+                CheckStatus(result, "Game Over");
             }
 
         }
 
         private void Image_Click(object sender, RoutedEventArgs e)
         {
-            selectedCard.Clear();
             Button clickedButton = sender as Button;
             Image image = clickedButton.Content as Image;
             if (clickedButton != null)
@@ -299,7 +308,13 @@ namespace CardRoulette
             ComputerText.Text = null;
             userCardCount = 0;
             computerCardCount = 0;
+            PlayerThrowing.Text = string.Empty;
+            CardThrowing.Text = string.Empty;
             StartTypingEffect(ComputerText, "Try again", 50);
+            selectedIndex = new List<int> {0, 1, 2, 3, 4 };
+            btnLiar.IsEnabled = false;
+            btnThrow.IsEnabled = true;
+            isEndTurn = true;
 
         }
         private void  SetComputerDeck()
@@ -408,10 +423,8 @@ namespace CardRoulette
                 referenceWindow.Close();
 
             }
-            else
-            {
-                RestartGame();
-            }
+            RestartGame();
+            
         }
 
 

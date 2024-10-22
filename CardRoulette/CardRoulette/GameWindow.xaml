@@ -99,8 +99,8 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Name="PlayeThrowing" Text="User threw" FontSize="40" Grid.Column="0" Margin="30" VerticalAlignment="Top" HorizontalAlignment="Center"/>
-                <TextBlock Name="CardThrowing" Text="Jack x3" FontSize="30" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBlock Name="PlayerThrowing" FontSize="30" Foreground="#fc2414" Grid.Column="0" Margin="30" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                <TextBlock Name="CardThrowing"  FontSize="30" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 <Grid Grid.Row="2" Grid.Column="1">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="50"/>
