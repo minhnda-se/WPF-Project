@@ -77,7 +77,19 @@ namespace CardRoulette.Controller
             return false;
         }
 
-        
+        public List<int> GetGun()
+        {
+            var turn = new List<int>();
+            Random random = new Random();
+            int index = random.Next(0, 3);
+            for (int i = 0; i < 4; i++)
+            {
+                int bullet = 0;
+                if (i == index) bullet = 1;
+                turn.Add(bullet);
+            }
+            return turn;
+        }
         
     }
 }

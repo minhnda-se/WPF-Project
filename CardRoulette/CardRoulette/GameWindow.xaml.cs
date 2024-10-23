@@ -45,6 +45,8 @@ namespace CardRoulette
         private ComputerController computerController;
         private ReferenceWindow referenceWindow;
         private bool isEndTurn;
+        private List<int> computerTurn;
+        private List<int> userTurn;
 
         public GameWindow(Card tableCard)
         {
@@ -65,6 +67,9 @@ namespace CardRoulette
             computerDeck = new List<Button> { Card1, Card2, Card3, Card4, Card5 };
             userDeck = new List<Button> { UserCard1, UserCard2, UserCard3, UserCard4, UserCard5 };
             throwingCards = new List<Image> { ShowCard1, ShowCard2, ShowCard3, };
+            computerTurn = new List<int>();
+            userTurn = new List<int>();
+
         }
        
 
@@ -154,7 +159,8 @@ namespace CardRoulette
                 {
                     await StartTypingEffect(ComputerText, "Well play!! Victory is your", 50);
                     await Task.Delay(1000);
-                    NoCardLeftEnding("User");
+                    bool result = await ComputerTakeShoot();
+                        CheckStatus(result, "Victory");
                 }
                 selectedCard.Clear();
                 selectedCount = 0;
@@ -286,6 +292,10 @@ namespace CardRoulette
             StartTypingEffect(ComputerText, "Welcome!! Challenger", 50);
             SetComputerDeck();
             SetUserDeck();
+            computerTurn = cardController.GetGun();
+            userTurn = cardController.GetGun();
+            ComputerTurn.Text = "Turns Remain: " + computerTurn.Count.ToString();
+            UserTurn.Text = "Turns Remain: " + userTurn.Count.ToString();
         }
         private void RestartGame()
         {
@@ -315,6 +325,9 @@ namespace CardRoulette
             btnLiar.IsEnabled = false;
             btnThrow.IsEnabled = true;
             isEndTurn = true;
+            ComputerTurn.Text = "Turns Remain: " + computerTurn.Count.ToString();
+            UserTurn.Text = "Turns Remain: " + userTurn.Count.ToString();
+            
 
         }
         private void  SetComputerDeck()
@@ -358,11 +371,10 @@ namespace CardRoulette
             CustomMessageBox customMessageBox = new CustomMessageBox();
             customMessageBox.Show();
             await customMessageBox.UserTakeShoot();
-            Random random = new Random();
-            if (random.Next(1, 6) > 3)
+            if (computerTurn[0] == 0)
             {
 
-                // Close the custom message box
+                computerTurn.Remove(computerTurn[0]);
                 var result = MessageBox.Show("Computer survive!");
                 if (result == MessageBoxResult.OK)
                 {
@@ -388,10 +400,9 @@ namespace CardRoulette
             CustomMessageBox customMessageBox = new CustomMessageBox();
             customMessageBox.Show();
             await customMessageBox.UserTakeShoot();
-            Random random = new Random();
-            if (random.Next(1, 6) > 3)
+            if (userTurn[0] == 0)
             {
-
+                userTurn.Remove(userTurn[0]);
                 // Close the custom message box
                 var result = MessageBox.Show(" How lucky are you!!");
                 if (result == MessageBoxResult.OK)
