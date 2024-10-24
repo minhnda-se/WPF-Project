@@ -31,7 +31,7 @@
             <Button Name="Credits" Content="Credits" Style="{StaticResource menuButton}" VerticalAlignment="Center" Grid.Row="4" Click="Credits_Click"/>
             <Button Name="Quit" Content="Quit" Style="{StaticResource menuButton}" VerticalAlignment="Center" Grid.Row="6" Click="Quit_Click"/>
             <Border Grid.RowSpan="7" BorderThickness="0 0 2 0" BorderBrush="#787878" Margin="0 0 10 0"/>
-            <Grid Name="TutorialGrid" Grid.Column="1" Grid.RowSpan="7" Visibility="Visible" >
+            <Grid Name="TutorialGrid" Grid.Column="1" Grid.RowSpan="7" Visibility="Collapsed" >
                 <Grid.RowDefinitions>
                     <RowDefinition Height="100"/>
                     <RowDefinition Height="*"/>
