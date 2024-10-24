@@ -31,8 +31,38 @@
             <Button Name="Credits" Content="Credits" Style="{StaticResource menuButton}" VerticalAlignment="Center" Grid.Row="4" Click="Credits_Click"/>
             <Button Name="Quit" Content="Quit" Style="{StaticResource menuButton}" VerticalAlignment="Center" Grid.Row="6" Click="Quit_Click"/>
             <Border Grid.RowSpan="7" BorderThickness="0 0 2 0" BorderBrush="#787878" Margin="0 0 10 0"/>
-            <Grid Name="TutorialGrid" Grid.Column="1" Grid.RowSpan="7" Visibility="Collapsed" >
+            <Grid Name="TutorialGrid" Grid.Column="1" Grid.RowSpan="7" Visibility="Visible" >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="100"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBlock Text="Quick Guide" FontSize="40" Foreground="red" Grid.Column="1" VerticalAlignment="Center"/>
+                <TextBlock FontSize="24" Margin="15 0 0 0" Grid.Row="1" TextWrapping="Wrap">
+                    <Run Text="Each player will have 5 cards and a gun with 1 bullet in random position."/>
+                </TextBlock>
+                <TextBlock FontSize="24" Margin="15 0 0 0" Grid.Row="2" TextWrapping="Wrap">
+                    <Run Text="You can choose either"/>
+                    <Run Text="Throw" Foreground="#db8651"/> <Run Text="or"/> <Run Text="Liar" Foreground="#db8651"/>
+                    <Run Text="based on the"/> <Run Text="table card." Foreground="#db8651"/>
+                    <Run Text="The maximum cards are allowed to throw is"/> <Run Text="3." Foreground="#db8651"/>
+                </TextBlock>
+
+                <TextBlock FontSize="24" Margin="15 0 0 0" Grid.Row="3" TextWrapping="Wrap">
+                    <Run Text="You will win if you guess computer move correctly. Otherwise, you will lose."/>
+                </TextBlock>
                 
+                <TextBlock FontSize="24" Margin="15 0 0 0" Grid.Row="4" TextWrapping="Wrap">
+                    <Run Text="The computer can do the same like you so be carefully in your moves"/>
+                </TextBlock>
+                
+                <TextBlock FontSize="20" Margin="15 0 0 0" Grid.Row="5" TextWrapping="Wrap">
+                    <Run Text="*Note:" Foreground="Crimson"/> <Run Text="The joker can be any card based on table card. Each player can have maximum"/>
+                    <Run Text="2 Jokers" Foreground="#db8651"/> <Run Text="in deck."/>
+                </TextBlock>
             </Grid>
             <Grid Name="CreditsGrid"  Grid.Column="1" Grid.RowSpan="7" Visibility="Collapsed">
                 <Grid.RowDefinitions>
